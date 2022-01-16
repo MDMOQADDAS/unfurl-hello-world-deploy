@@ -1,51 +1,16 @@
-# This Ensemble template was generated during creation of your ~/unfurl_home and models
-# the local environment Unfurl runs inside of, e.g. the client machine or container,
-# its local network, etc.
-# It is intended to be included in your ensemble.yaml manifest file
-# (by default, found at ensemble/ensemble.yaml)
-# You can use it to configure your local environment by adding your own templates
-# and deploying it like any other Ensemble.
 apiVersion: unfurl/v1alpha1
-
+kind: Ensemble
 spec:
-  instances:
-    # declare the existence of an instance named localhost, no deployment necessary
-    localhost:
-      template: localhost
-      readyState: ok
-
   service_template:
-    repositories:
-      asdf:
-        url: https://github.com/asdf-vm/asdf.git#v0.8.0
-
-    imports:
-      - repository: unfurl
-        file: configurators/supervisor-template.yaml
-      - repository: unfurl
-        file: tosca_plugins/localhost.yaml
-      - repository: unfurl
-        file: tosca_plugins/artifacts.yaml
-      - repository: unfurl
-        file: tosca_plugins/k8s.yaml
-
     topology_template:
       node_templates:
-        localhost:
-          type: unfurl.nodes.Localhost
-
-        # uncomment if you want to default to using the current context in your kubeconfig
-        # defaultK8sCluster:
-        #   # set the "default" directive so this template will only be used
-        #   # if no other matching template is defined elsewhere
-        #   directives:
-        #     - default
-        #   type: unfurl.nodes.K8sCluster
-
-        # uncomment and deploy if you want to share a local supervisord instance across projects
-        # supervisord:
-        #   type: unfurl.nodes.Supervisor
-        #   directives:
-        #     - default
-        #   requirements:
-        #   - host: localhost
+        test_remote:
+          type: tosca:Root
+          interfaces:
+            Standard:
+              configure:
+                implementation:
+                  primary: Cmd
+                  operation_host: staging.example.com
+                inputs:
+                  cmd: echo "Hello World"
